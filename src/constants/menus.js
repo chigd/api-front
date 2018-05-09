@@ -1,6 +1,14 @@
 export const menus = [
     { key: '/app/dashboard/index', title: '首页', icon: 'mobile', },
     {
+        key: '/app/api', title: 'API管理', icon: 'rocket',
+        sub: [
+            { key: '/app/api/urlrule', title: 'URL格式定义', icon: '', },
+            { key: '/app/api/common', title: '公共参数说明', icon: '', },
+            { key: '/app/api/list', title: '接口详细定义', icon: '', },
+        ],
+    },
+    {
         key: '/app/ui', title: 'UI', icon: 'scan',
         sub: [
             { key: '/app/ui/buttons', title: '按钮', icon: '', },

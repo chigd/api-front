@@ -77,7 +77,10 @@ module.exports = function(proxy, allowedHost) {
       disableDotRule: true,
     },
     public: allowedHost,
-    proxy,
+    // 设置代理 api请求转发到80
+    proxy: {
+        "/api": "http://localhost:80"
+    },
     setup(app) {
       // This lets us open files from the runtime error overlay.
       app.use(errorOverlayMiddleware());

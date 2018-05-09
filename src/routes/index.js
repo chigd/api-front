@@ -28,7 +28,9 @@ import Wysiwyg from 'bundle-loader?lazy!../components/ui/Wysiwyg';  // 按需加
 import Bundle from '../components/widget/Bundle';
 import Cssmodule from '../components/cssmodule';
 import MapUi from '../components/ui/map';
-
+import ApiIndex from '../components/api/index';
+import UrlRule from "../components/api/UrlRule";
+import CommonDetail from "../components/api/CommonDetail";
 const WysiwygBundle = (props) => (
     <Bundle load={Wysiwyg}>
         {(Component) => <Component {...props} />}
@@ -74,7 +76,13 @@ export default class CRouter extends Component {
 
                 <Route exact path="/app/cssModule" component={Cssmodule} />
 
+                <Route exact path="/app/api/list" component={ApiIndex} />
+                <Route exact path="/app/api/urlrule" component={UrlRule} />
+                <Route exact path="/app/api/common" component={CommonDetail} />
+
+
                 <Route render={() => <Redirect to="/404" />} />
+
             </Switch>
         )
     }
