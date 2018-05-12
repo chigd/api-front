@@ -24,16 +24,17 @@ class Index extends React.Component {
             this.setState({dataSource})
         }, 500);
     };
-    handleAdd = () => {
+    handleEdit = (data) => {
         this.setState({
-            content: 'add'
+            content: 'add',
+            data:data
         })
-
     };
     handleList=()=>{
         this.setState({
             content: 'list'
         })
+
     }
 
     render() {
@@ -47,10 +48,10 @@ class Index extends React.Component {
                                 {(() => {
                                         switch (this.state.content) {
                                             case "list":
-                                                return <ApiTable  clickCallback={this.handleAdd} />;
+                                                return <ApiTable  clickCallback={this.handleEdit} />;
                                                 break;
                                             case "add":
-                                                return <ApiForm clickCallback={this.handleList} />;
+                                                return <ApiForm data={this.state.data} clickCallback={this.handleList}  />;
                                                 break;
                                             default:
                                                 return null;

@@ -2,7 +2,7 @@
  * Created by hao.cheng on 2017/4/16.
  */
 import React from 'react';
-import {Input, Table} from 'antd';
+import {Input, Pagination, Popconfirm, Table} from 'antd';
 import Button from "antd/es/button/button";
 import $ from "jquery";
 
@@ -39,7 +39,8 @@ const data = [
 ];
 
 const API = {
-    REPORT_EDIT_ENTER: "api/v1/list"
+    REPORT_EDIT_ENTER: "api/v1/list",
+    API_DELETE_BYID: "api/v1/delete"
 };
 
 export default class ApiTable extends React.Component {
@@ -48,25 +49,49 @@ export default class ApiTable extends React.Component {
         this.state = {
             columns: [
                 {title: '接口名称', dataIndex: 'name', key: 'name'},
-                {title: '接口URI', dataIndex: 'url', key: 'url', render: text => <a onClick={this.props.clickCallback}>{text}</a>},
+                {title: '接口URI', dataIndex: 'url', key: 'url', render: (text, record) => <a onClick={()=>this.props.clickCallback(record)}>{text}</a>},
                 {title: '请求方式', dataIndex: 'type', key: 'type'},
                 {title: '创建者', dataIndex: 'user', key: 'user'},
                 {title: '更新时间', dataIndex: 'updatetime', key: 'updatetime'},
-                {title: '操作', dataIndex: '', key: 'x', render: () => <Button type="primary" onClick={this.props.clickCallback}>修改</Button>},
+                {
+                    title: '操作',
+                    dataIndex: '',
+                    key: 'x',
+                    render: (text, record) => <div>
+                        <Button type="primary" onClick={()=>this.props.clickCallback(record)}>修改</Button>
+                        <Popconfirm title="确认删除?" onConfirm={() => this.onDelete(record.id)}>
+                            <Button type="primary" href="javascript:;">删除</Button>
+                        </Popconfirm>
+                    </div>
+                },
             ]
         }
         this.getApiList();
     }
-
-    getApiList = (keyword)=> {
+    onDelete=(id)=>{
+        $.ajax({
+            url: API.API_DELETE_BYID,
+            type: 'get',
+            data: "id="+id,
+            contentType: 'application/json',
+            success: (res) => {
+                this.getApiList();
+            }
+        })
+    }
+    getApiList = (keyword,pageSize,pageNum) => {
         $.ajax({
             url: API.REPORT_EDIT_ENTER,
             type: 'get',
-            data : keyword,
+            data: keyword,
             contentType: 'application/json',
             success: (res) => {
+                const {records,pageNum,pageSize,recordNum} = res.data
                 this.setState({
-                    data: res.data
+                    data: records,
+                    pageNum: pageNum,
+                    pageSize: pageSize,
+                    recordNum: recordNum,
                 });
             }
         })
@@ -75,13 +100,22 @@ export default class ApiTable extends React.Component {
     search = () => {
 
     }
-
+    state = {
+        current: 3,
+    }
+    onChange = (page) => {
+        console.log(page);
+        this.setState({
+            pageNum: page,
+        });
+    }
     render() {
+        const {pageNum,pageSize,recordNum} =this.state;
         return (
             <div>
                 <Search
                     placeholder="名称/URL"
-                    onSearch={value => this.getApiList("keyword="+value)}
+                    onSearch={value => this.getApiList("keyword=" + value)}
                     style={{width: 200, marginRight: '20px'}}
                     enterButton
                 />
@@ -91,7 +125,10 @@ export default class ApiTable extends React.Component {
                     columns={this.state.columns}
                     expandedRowRender={record => <p>{record.descr}</p>}
                     dataSource={this.state.data}
+                    pagination={false}
                 />
+                <br/>
+                <Pagination style={{float:"right"}} pageSize={pageSize} current={pageNum} onChange={this.onChange} total={recordNum} />
             </div>
         )
     }
